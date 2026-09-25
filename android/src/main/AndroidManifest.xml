@@ -1,0 +1,25 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- USB host is optional: phones without OTG still get Bluetooth. USB
+         access itself needs no permission entry; consent is requested per
+         device at runtime via UsbManager.requestPermission. -->
+    <uses-feature android:name="android.hardware.usb.host" android:required="false" />
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+
+    <!-- API 30 and below. -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <!-- Pre-31 BLE scans also need ACCESS_FINE_LOCATION. It is left to the app
+         to declare: a capped declaration here would merge into, and cap, an
+         app that needs location for other reasons. -->
+
+    <!-- API 31+. Scan results are only used to find Trezors, never to derive
+         location, so neverForLocation keeps location permission out of it. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+</manifest>

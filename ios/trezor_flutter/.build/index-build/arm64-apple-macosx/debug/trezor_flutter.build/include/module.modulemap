@@ -1,0 +1,3 @@
+module trezor_flutter {
+    header "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/include/trezor_flutter-Swift.h"
+}

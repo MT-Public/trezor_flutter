@@ -1,0 +1,47 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<trezor_flutter-arm64-apple-macosx-debug.module>"]
+  "test": ["<trezor_flutter-arm64-apple-macosx-debug.module>"]
+  "trezor_flutter-arm64-apple-macosx-debug.module": ["<trezor_flutter-arm64-apple-macosx-debug.module>"]
+default: "main"
+nodes:
+  "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Sources/trezor_flutter/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Sources/trezor_flutter/TrezorBleCentral.swift","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Sources/trezor_flutter/TrezorFlutterPlugin.swift"]
+    outputs: ["/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/sources"]
+    description: "Write auxiliary file /Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/sources"
+
+  "<trezor_flutter-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/Modules/trezor_flutter.swiftmodule"]
+    outputs: ["<trezor_flutter-arm64-apple-macosx-debug.module>"]
+
+  "C.trezor_flutter-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Sources/trezor_flutter/TrezorBleCentral.swift","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Sources/trezor_flutter/TrezorFlutterPlugin.swift","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/sources"]
+    outputs: ["/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/Modules/trezor_flutter.swiftmodule"]
+    description: "Compiling Swift Module 'trezor_flutter' (2 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","trezor_flutter","-emit-dependencies","-emit-module","-emit-module-path","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/Modules/trezor_flutter.swiftmodule","-output-file-map","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/output-file-map.json","-parse-as-library","-incremental","@/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/sources","-I","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx12.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/include/trezor_flutter-Swift.h","-swift-version","5","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","trezor_flutter"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Sources/trezor_flutter/","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Package.swift","/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

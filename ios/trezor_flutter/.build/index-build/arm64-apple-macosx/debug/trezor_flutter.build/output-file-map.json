@@ -1,0 +1,17 @@
+{
+  "": {
+    "swift-dependencies": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/primary.swiftdeps"
+  },
+  "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Sources/trezor_flutter/TrezorBleCentral.swift": {
+    "dependencies": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorBleCentral.d",
+    "object": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorBleCentral.swift.o",
+    "swiftmodule": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorBleCentral~partial.swiftmodule",
+    "swift-dependencies": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorBleCentral.swiftdeps",
+    "diagnostics": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorBleCentral.dia"  },
+  "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/Sources/trezor_flutter/TrezorFlutterPlugin.swift": {
+    "dependencies": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorFlutterPlugin.d",
+    "object": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorFlutterPlugin.swift.o",
+    "swiftmodule": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorFlutterPlugin~partial.swiftmodule",
+    "swift-dependencies": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorFlutterPlugin.swiftdeps",
+    "diagnostics": "/Users/mtmacmini/Documents/GitHub/Dex-Wallet-Mobile-Application-Flutter/packages/trezor_flutter/ios/trezor_flutter/.build/index-build/arm64-apple-macosx/debug/trezor_flutter.build/TrezorFlutterPlugin.dia"  }
+}

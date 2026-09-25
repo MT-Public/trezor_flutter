@@ -1,0 +1,21 @@
+name: trezor_flutter_example
+description: Connects to a Trezor over USB or Bluetooth and reads its info and addresses.
+publish_to: "none"
+version: 1.0.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  trezor_flutter:
+    path: ../
+  # Only for the runtime Bluetooth prompts; the plugin itself requests nothing.
+  permission_handler: ^12.0.0
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
