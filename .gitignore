@@ -1,0 +1,31 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+.pub/
+build/
+# A plugin package does not commit its lockfile; the app's pubspec.lock
+# pins the resolved versions.
+pubspec.lock
+
+# Android
+android/.gradle/
+android/build/
+android/local.properties
+android/.cxx/
+**/*.iml
+
+# iOS: Swift Package Manager / Xcode artifacts
+ios/trezor_flutter/.build/
+ios/trezor_flutter/.swiftpm/
+ios/.symlinks/
+ios/Pods/
+**/xcuserdata/
+**/DerivedData/
+
+# IDE / OS
+.idea/
+.vscode/*
+# Shared run configuration: launches the example app.
+!.vscode/launch.json
+*.swp
+.DS_Store

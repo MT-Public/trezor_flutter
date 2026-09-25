@@ -1,15 +1,15 @@
 # trezor_flutter
 
 Connect Flutter apps to [Trezor](https://trezor.io) hardware wallets over
-native transports — **USB and Bluetooth LE on Android, Bluetooth LE on iOS** —
+native transports - **USB and Bluetooth LE on Android, Bluetooth LE on iOS** -
 with no bridge, no Trezor Suite and no web view.
 
-The native side is a thin packet pipe. Everything else — framing, encryption,
-pairing, protobuf and the chain helpers — runs in Dart and is shared by both
+The native side is a thin packet pipe. Everything else - framing, encryption,
+pairing, protobuf and the chain helpers - runs in Dart and is shared by both
 platforms.
 
 Built and maintained by
-[**Macromodule Technologies**](https://macromodule.com/) — AI, blockchain and
+[**Macromodule Technologies**](https://macromodule.com/) - AI, blockchain and
 software development.
 
 ## Contents
@@ -40,8 +40,8 @@ software development.
 
 **Protocols**
 
-- **Codec v1** — Model One, Model T, Safe 3, Safe 5.
-- **THP (Trezor-Host Protocol)** — Bluetooth-capable Trezors (Safe 7):
+- **Codec v1** - Model One, Model T, Safe 3, Safe 5.
+- **THP (Trezor-Host Protocol)** - Bluetooth-capable Trezors (Safe 7):
   - channel allocation, packet segmentation and CRC-32;
   - alternating-bit acknowledgements with retransmission and busy back-off;
   - Noise XX handshake (X25519, AES-256-GCM, SHA-256) with unlock-on-connect;
@@ -94,8 +94,8 @@ streaming.
 
 | Model                   | USB (Android) | Bluetooth | Protocol | Solana |
 |-------------------------|---------------|-----------|----------|--------|
-| Model One               | ✓             | —         | Codec v1 | —      |
-| Model T, Safe 3, Safe 5 | ✓             | —         | Codec v1 | ✓      |
+| Model One               | ✓             | -         | Codec v1 | -      |
+| Model T, Safe 3, Safe 5 | ✓             | -         | Codec v1 | ✓      |
 | Safe 7                  | ✓             | ✓         | THP      | ✓      |
 
 iOS apps cannot talk to a Trezor over USB, so iOS supports Bluetooth only.
@@ -116,7 +116,7 @@ dependencies:
 - **Your app must request the Bluetooth runtime permissions** before scanning
   or connecting (`BLUETOOTH_SCAN` + `BLUETOOTH_CONNECT` on Android 12+). On
   Android 11 and below a scan also needs `ACCESS_FINE_LOCATION`, which the
-  plugin deliberately does not declare — add it to your manifest with
+  plugin deliberately does not declare - add it to your manifest with
   `android:maxSdkVersion="30"` if you support those versions.
 - USB needs no manifest entry: access is asked per device at runtime.
 
@@ -188,7 +188,7 @@ print('${f.model} ${f.firmwareVersion} "${f.label}"');
 ```
 
 `connect` picks the protocol (Bluetooth is always THP; over USB it probes),
-runs the THP handshake — a locked device shows its PIN screen — and, on the
+runs the THP handshake - a locked device shows its PIN screen - and, on the
 first Bluetooth connection, pairing: the Trezor shows a 6-digit code and
 `onPairingCodeRequest` returns what the user typed.
 
@@ -196,7 +196,7 @@ first Bluetooth connection, pairing: the Trezor shows a 6-digit code and
 
 After pairing, THP issues a credential that lets the same phone reconnect
 without a code. Implement `ThpCredentialStore` on top of secure storage
-(Keychain / Keystore) — each credential contains the host's private key.
+(Keychain / Keystore) - each credential contains the host's private key.
 `ThpCredential` serializes with `toJson` / `fromJson`.
 `InMemoryThpCredentialStore` is for tests: every restart pairs again.
 
@@ -325,7 +325,7 @@ await trezor.close();  // releases the connection
 
 | API                          | Purpose                                                 |
 |------------------------------|---------------------------------------------------------|
-| `ThpCredentialStore`         | `load`, `save`, `remove` — implement on secure storage. |
+| `ThpCredentialStore`         | `load`, `save`, `remove` - implement on secure storage. |
 | `ThpCredential`              | Stored credential; `toJson` / `fromJson`.               |
 | `InMemoryThpCredentialStore` | Process-lifetime store for tests.                       |
 
@@ -371,7 +371,7 @@ Optional `EthereumDefinitions` (signed network / token definitions from
 
 ### Raw messages
 
-`package:trezor_flutter/messages.dart` — typed protobuf classes for management
+`package:trezor_flutter/messages.dart` - typed protobuf classes for management
 (`Initialize`, `GetFeatures`, `Ping`, `LockDevice`, `EndSession`, …), common
 (`Success`, `Failure`, `ButtonRequest`, `PinMatrixAck`, `PassphraseAck`, …),
 Ethereum, Solana, Bitcoin (`GetAddress`, `GetPublicKey`), Tron
@@ -413,14 +413,14 @@ in-memory `TrezorLink`.
 
 <p align="center">
   <a href="https://macromodule.com/">
-    <img src="https://macromodule.com/wp-content/uploads/2024/11/MT-new-1.png" width="220" alt="Macromodule Technologies — Empowering Your Passion"/>
+    <img src="https://macromodule.com/wp-content/uploads/2024/11/MT-new-1.png" width="220" alt="Macromodule Technologies - Empowering Your Passion"/>
   </a>
 </p>
 
 **trezor_flutter** is built and maintained by
 [Macromodule Technologies](https://macromodule.com/), an AI, blockchain and
 software development company that helps startups, mid-market businesses and
-enterprises plan, build and scale secure digital products — including the
+enterprises plan, build and scale secure digital products - including the
 hardware-wallet support in this package.
 
 Need Trezor or other hardware-wallet integration, a crypto wallet, or a
@@ -443,7 +443,7 @@ Flutter app built? [Get in touch at macromodule.com](https://macromodule.com/).
 
 ### Contributing
 
-Contributions are welcome — bug reports, device test results and pull requests
+Contributions are welcome - bug reports, device test results and pull requests
 alike.
 
 - **Found a bug?** [Open an issue](https://github.com/MT-Public/trezor_flutter/issues)
@@ -462,4 +462,4 @@ works with.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).

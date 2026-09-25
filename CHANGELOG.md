@@ -1,3 +1,8 @@
+## 1.0.1
+
+- Documentation: full feature list and API reference in the README, hardware
+  and test status.
+
 ## 1.0.0
 
 Initial release.
