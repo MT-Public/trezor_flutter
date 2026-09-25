@@ -8,6 +8,10 @@ The native side is a thin packet pipe. Everything else — framing, encryption,
 pairing, protobuf and the chain helpers — runs in Dart and is shared by both
 platforms.
 
+Built and maintained by
+[**Macromodule Technologies**](https://macromodule.com/) — AI, blockchain and
+software development.
+
 ## Contents
 
 - [Features](#features)
@@ -18,6 +22,7 @@ platforms.
 - [API reference](#api-reference)
 - [Architecture](#architecture)
 - [Limitations](#limitations)
+- [About Macromodule Technologies](#about-macromodule-technologies)
 - [Contributors](#contributors)
 
 ## Features
@@ -403,6 +408,23 @@ in-memory `TrezorLink`.
   unknown chains and tokens are shown by chain id and contract address.
 - Model One PIN entry through the host needs your own matrix UI via
   `onPinMatrixRequest`; touchscreen models take the PIN on the device.
+
+## About Macromodule Technologies
+
+<p align="center">
+  <a href="https://macromodule.com/">
+    <img src="https://macromodule.com/wp-content/uploads/2024/11/MT-new-1.png" width="220" alt="Macromodule Technologies — Empowering Your Passion"/>
+  </a>
+</p>
+
+**trezor_flutter** is built and maintained by
+[Macromodule Technologies](https://macromodule.com/), an AI, blockchain and
+software development company that helps startups, mid-market businesses and
+enterprises plan, build and scale secure digital products — including the
+hardware-wallet support in this package.
+
+Need Trezor or other hardware-wallet integration, a crypto wallet, or a
+Flutter app built? [Get in touch at macromodule.com](https://macromodule.com/).
 
 ## Contributors
 
