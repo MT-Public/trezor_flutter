@@ -140,6 +140,17 @@ class FakeCodecV1Trezor {
           MessageType.solanaTxSignature,
           (ProtoWriter()..bytes(1, List.filled(64, 0x33))).toBytes(),
         );
+      case MessageType.tronSignTx:
+        tronSignTx = payload;
+        _send(MessageType.tronContractRequest, Uint8List(0));
+      case MessageType.tronTransferContract ||
+          MessageType.tronTriggerSmartContract:
+        tronContractType = type;
+        tronContract = payload;
+        _send(
+          MessageType.tronSignature,
+          (ProtoWriter()..bytes(1, List.filled(65, 0x44))).toBytes(),
+        );
       case MessageType.ethereumTxAck:
         receivedCalldata!.add(ProtoFields.decode(payload).bytes(1)!);
         _requestMoreOrSign(legacy: _legacy);
@@ -156,6 +167,10 @@ class FakeCodecV1Trezor {
 
   bool _pinged = false;
   Uint8List? _pendingPing;
+
+  Uint8List? tronSignTx;
+  int? tronContractType;
+  Uint8List? tronContract;
 
   List<int>? solanaPath;
   Uint8List? solanaSignedMessage;

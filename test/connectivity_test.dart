@@ -8,6 +8,7 @@ import 'package:trezor_flutter/src/protocol/codec_v1.dart';
 import 'package:trezor_flutter/src/protocol/thp/thp_channel.dart';
 import 'package:trezor_flutter/src/protocol/thp/thp_crypto.dart';
 import 'package:trezor_flutter/src/protocol/thp/thp_packet.dart';
+import 'package:trezor_flutter/src/protobuf/proto.dart';
 import 'package:trezor_flutter/src/util/bytes.dart';
 
 import 'fake_trezor.dart';
@@ -190,6 +191,92 @@ void main() {
     });
   });
 
+  group('Tron', () {
+    // Unsigned transactions exactly as TronGrid returned them
+    // (createtransaction / triggersmartcontract, USDT transfer).
+    final trxTransfer = hexToBytes(
+      '0a02f9f42208ad71395f7e9aa6be40c8bdebb88e345a67080112630a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412320a154189cbcb2372e1c2fbc00f24895a406a0c722c89f312154182dd6b9966724ae2fdc79b416c7588da67ff1b3518c0843d70b984e8b88e34',
+    );
+    final trc20Transfer = hexToBytes(
+      '0a02f9f522081bc31384699eb1964080d5ebb88e345aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a154189cbcb2372e1c2fbc00f24895a406a0c722c89f3121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000082dd6b9966724ae2fdc79b416c7588da67ff1b3500000000000000000000000000000000000000000000000000000000000f424070a089e8b88e34900180c2d72f',
+    );
+
+    test('TronGrid raw_data is reproduced byte for byte', () {
+      final trx = TronRawTransactionParser.parse(trxTransfer);
+      expect(trx.contract.messageType, MessageType.tronTransferContract);
+      expect(trx.feeLimit, isNull);
+
+      final trc20 = TronRawTransactionParser.parse(trc20Transfer);
+      expect(trc20.contract.messageType, MessageType.tronTriggerSmartContract);
+      expect(trc20.feeLimit, 100000000);
+    });
+
+    test('signs from raw_data: SignTx, then the contract', () async {
+      final link = FakeLink(64);
+      final device = FakeCodecV1Trezor(link);
+      final client = await TrezorClient.connect(
+        link: link,
+        transport: TrezorTransportType.usb,
+        app: app,
+      );
+      final sig = await client.tronSignRawTransaction(
+        "m/44'/195'/0'/0/0",
+        trc20Transfer,
+      );
+      expect(sig, List.filled(65, 0x44));
+      expect(device.tronContractType, MessageType.tronTriggerSmartContract);
+      final signTx = ProtoFields.decode(device.tronSignTx!);
+      expect(signTx.uints(1), parseBip32Path("m/44'/195'/0'/0/0"));
+      expect(signTx.uint(7), 100000000);
+    });
+
+    test('refuses what Trezor could not rebuild exactly', () {
+      final tx = ProtoFields.decode(trxTransfer);
+      final contract = tx.bytes(11)!;
+
+      // Permission id on the contract (multi-signature accounts).
+      final withPermission = Uint8List.fromList([
+        ...trxTransfer.sublist(0, trxTransfer.length),
+      ]);
+      final patchedContract = Uint8List.fromList([...contract, 0x28, 0x02]);
+      final patched = _replaceField11(
+        withPermission,
+        contract,
+        patchedContract,
+      );
+      expect(
+        () => TronRawTransactionParser.parse(patched),
+        throwsA(isA<TrezorProtocolException>()),
+      );
+
+      // Two contracts.
+      final twoContracts = Uint8List.fromList([
+        ...trxTransfer,
+        0x5a,
+        contract.length,
+        ...contract,
+      ]);
+      expect(
+        () => TronRawTransactionParser.parse(twoContracts),
+        throwsA(isA<TrezorProtocolException>()),
+      );
+
+      // Same fields, different order: the device would sign other bytes.
+      final reordered =
+          (ProtoWriter()
+                ..uint(8, tx.uint(8))
+                ..bytes(1, tx.bytes(1))
+                ..bytes(4, tx.bytes(4))
+                ..bytes(11, contract)
+                ..uint(14, tx.uint(14)))
+              .toBytes();
+      expect(
+        () => TronRawTransactionParser.parse(reordered),
+        throwsA(isA<TrezorProtocolException>()),
+      );
+    });
+  });
+
   group('THP', () {
     late Uint8List deviceKey;
     setUp(() => deviceKey = randomBytes(32));
@@ -328,4 +415,12 @@ void main() {
 abstract final class ProtoWriterShim {
   /// `Failure { code = [code] }`, encoded by hand.
   static Uint8List failure(int code) => Uint8List.fromList([0x08, code]);
+}
+
+/// Replaces the single contract (field 11) in [raw] with [replacement].
+Uint8List _replaceField11(Uint8List raw, Uint8List old, Uint8List replacement) {
+  final hexRaw = bytesToHex(raw);
+  final oldField = bytesToHex([0x5a, old.length, ...old]);
+  final newField = bytesToHex([0x5a, replacement.length, ...replacement]);
+  return hexToBytes(hexRaw.replaceFirst(oldField, newField));
 }

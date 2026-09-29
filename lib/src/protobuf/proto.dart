@@ -151,6 +151,12 @@ class ProtoFields {
 
   bool has(int field) => _fields.containsKey(field);
 
+  /// Field numbers present, in first-seen order.
+  Iterable<int> get fieldNumbers => _fields.keys;
+
+  /// Every raw value of [field] (`int` or `Uint8List`), in wire order.
+  List<Object> rawValues(int field) => List.unmodifiable(_fields[field] ?? []);
+
   int? uint(int field) {
     final values = _fields[field];
     if (values == null) return null;

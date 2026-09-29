@@ -14,11 +14,14 @@ android/local.properties
 android/.cxx/
 **/*.iml
 
-# iOS: Swift Package Manager / Xcode artifacts
+# iOS / macOS: Swift Package Manager / Xcode artifacts
 ios/trezor_flutter/.build/
 ios/trezor_flutter/.swiftpm/
 ios/.symlinks/
 ios/Pods/
+macos/trezor_flutter/.build/
+macos/trezor_flutter/.swiftpm/
+macos/Pods/
 **/xcuserdata/
 **/DerivedData/
 

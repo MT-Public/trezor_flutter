@@ -20,6 +20,7 @@ library;
 
 export 'src/api/ethereum.dart';
 export 'src/api/solana.dart';
+export 'src/api/tron.dart';
 export 'src/client/trezor_client.dart';
 export 'src/client/trezor_interaction.dart';
 export 'src/exceptions.dart';

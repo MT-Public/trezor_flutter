@@ -1,3 +1,15 @@
+## 1.1.0
+
+- macOS: USB (IOKit, WebUSB interface) and Bluetooth LE (CoreBluetooth),
+  with USB hotplug events. Swift Package Manager and CocoaPods.
+- Tron: `tronGetAddress`, `tronSignRawTransaction` (signs TronGrid
+  `raw_data` directly: TRX, TRC-20 and staking / voting / delegation
+  contracts) and `tronSignTransaction` for explicit fields.
+- The raw transaction is checked to be byte-identical to what the device will
+  rebuild and sign, so unsupported transactions fail before reaching the
+  device instead of producing an unusable signature.
+- Tron signing messages in `package:trezor_flutter/messages.dart`.
+
 ## 1.0.1
 
 - Documentation: full feature list and API reference in the README, hardware

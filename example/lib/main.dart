@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -69,16 +70,20 @@ class _TrezorExampleState extends State<TrezorExample> {
   }
 
   Future<void> _scan() async {
-    final statuses = await [
-      Permission.bluetoothScan,
-      Permission.bluetoothConnect,
-      Permission.bluetooth,
-      // Android 11 and below only; ignored where not declared.
-      Permission.locationWhenInUse,
-    ].request();
-    if (statuses.values.any((s) => s.isPermanentlyDenied)) {
-      setState(() => _status = 'Bluetooth permission denied');
-      return;
+    // macOS asks for Bluetooth access itself when scanning starts, and
+    // permission_handler has no macOS implementation.
+    if (defaultTargetPlatform != TargetPlatform.macOS) {
+      final statuses = await [
+        Permission.bluetoothScan,
+        Permission.bluetoothConnect,
+        Permission.bluetooth,
+        // Android 11 and below only; ignored where not declared.
+        Permission.locationWhenInUse,
+      ].request();
+      if (statuses.values.any((s) => s.isPermanentlyDenied)) {
+        setState(() => _status = 'Bluetooth permission denied');
+        return;
+      }
     }
     await _platform.bleStartScan();
     setState(() => _scanning = true);

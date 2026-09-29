@@ -22,7 +22,7 @@ class TrezorPlatformException extends TrezorException {
   String toString() => 'TrezorPlatformException($code): $message';
 }
 
-/// Error codes shared by the Android and iOS implementations.
+/// Error codes shared by the Android, iOS and macOS implementations.
 abstract final class TrezorPlatformErrorCode {
   static const deviceNotFound = 'deviceNotFound';
   static const permissionDenied = 'permissionDenied';

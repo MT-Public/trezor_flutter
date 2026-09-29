@@ -188,7 +188,8 @@ class TrezorPlatform {
         .toList();
   }
 
-  /// Shows Android's "allow access to USB device" dialog if needed.
+  /// Shows Android's "allow access to USB device" dialog if needed. macOS has
+  /// no per-device USB permission and answers `true`.
   Future<bool> usbRequestPermission(String deviceId) async =>
       await _invoke<bool>('usbRequestPermission', {'deviceId': deviceId}) ??
       false;

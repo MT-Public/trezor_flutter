@@ -25,8 +25,9 @@ class TrezorDevice {
     hasPermission: map['hasPermission'] as bool? ?? true,
   );
 
-  /// USB: the Android device path. BLE: the MAC address on Android, the
-  /// CoreBluetooth peripheral UUID on iOS. Only meaningful to this phone.
+  /// USB: the Android device path, or an I/O Registry id on macOS. BLE: the
+  /// MAC address on Android, the CoreBluetooth peripheral UUID on iOS and
+  /// macOS. Only meaningful to this device, and for USB only while plugged in.
   final String id;
   final TrezorTransportType transport;
   final String? name;
@@ -35,6 +36,7 @@ class TrezorDevice {
   final int? rssi;
 
   /// USB only: whether Android has already granted access to this device.
+  /// Always true on macOS, which has no per-device USB permission.
   final bool hasPermission;
 
   /// USB product id of the bootloader. A device in this mode can be listed but

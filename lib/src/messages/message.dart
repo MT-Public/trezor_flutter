@@ -99,6 +99,18 @@ abstract final class MessageType {
 
   static const tronGetAddress = 2200;
   static const tronAddress = 2201;
+  static const tronSignTx = 2202;
+  static const tronSignature = 2203;
+  static const tronContractRequest = 2204;
+  static const tronTransferContract = 2205;
+  static const tronTriggerSmartContract = 2206;
+  static const tronFreezeBalanceV2Contract = 2207;
+  static const tronUnfreezeBalanceV2Contract = 2208;
+  static const tronWithdrawUnfreeze = 2209;
+  static const tronVoteWitnessContract = 2210;
+  static const tronDelegateResourceContract = 2211;
+  static const tronUnDelegateResourceContract = 2212;
+  static const tronWithdrawBalance = 2213;
 }
 
 /// Decoders for every device → host message this package understands.
@@ -120,6 +132,8 @@ final Map<int, TrezorMessage Function(ProtoFields)> _decoders = {
   MessageType.solanaPublicKey: SolanaPublicKey.decode,
   MessageType.solanaTxSignature: SolanaTxSignature.decode,
   MessageType.tronAddress: TronAddress.decode,
+  MessageType.tronContractRequest: (_) => const TronContractRequest(),
+  MessageType.tronSignature: TronSignature.decode,
   MessageType.thpPairingRequestApproved: (_) =>
       const ThpPairingRequestApproved(),
   MessageType.thpPairingPreparationsFinished: (_) =>
