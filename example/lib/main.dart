@@ -30,6 +30,8 @@ class _TrezorExampleState extends State<TrezorExample> {
   String _status = 'Idle';
   String? _ethAddress;
   String? _solAddress;
+  String? _tronAddress;
+  bool _fetchingAddresses = false;
 
   @override
   void initState() {
@@ -96,7 +98,7 @@ class _TrezorExampleState extends State<TrezorExample> {
     await _client?.close();
     setState(() {
       _client = null;
-      _ethAddress = _solAddress = null;
+      _ethAddress = _solAddress = _tronAddress = null;
       _status = 'Connecting to ${device.name ?? device.id}…';
     });
     try {
@@ -124,18 +126,25 @@ class _TrezorExampleState extends State<TrezorExample> {
       setState(() {
         _client = client;
         _status = 'Connected';
+        _fetchingAddresses = true;
       });
 
+      // One request at a time: the device handles a single call at once.
+      final features = client.features;
       final eth = await client.ethereumGetAddress("m/44'/60'/0'/0/0");
-      final sol = client.features.hasCapability(TrezorCapability.solana)
-          ? await client.solanaGetAddress("m/44'/501'/0'/0'")
-          : null;
-      setState(() {
-        _ethAddress = eth;
-        _solAddress = sol;
-      });
+      setState(() => _ethAddress = eth);
+      if (features.hasCapability(TrezorCapability.solana)) {
+        final sol = await client.solanaGetAddress("m/44'/501'/0'/0'");
+        setState(() => _solAddress = sol);
+      }
+      if (features.hasCapability(TrezorCapability.tron)) {
+        final tron = await client.tronGetAddress("m/44'/195'/0'/0/0");
+        setState(() => _tronAddress = tron);
+      }
     } on TrezorException catch (e) {
       setState(() => _status = 'Failed: ${e.message}');
+    } finally {
+      if (mounted) setState(() => _fetchingAddresses = false);
     }
   }
 
@@ -208,6 +217,19 @@ class _TrezorExampleState extends State<TrezorExample> {
               ListTile(
                 title: const Text('Solana'),
                 subtitle: SelectableText(_solAddress!),
+              ),
+            if (_tronAddress != null)
+              ListTile(
+                title: const Text('Tron'),
+                subtitle: SelectableText(_tronAddress!),
+              ),
+            if (_fetchingAddresses)
+              const ListTile(
+                leading: SizedBox.square(
+                  dimension: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                ),
+                title: Text('Fetching addresses…'),
               ),
           ],
           const Divider(),

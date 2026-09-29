@@ -1,8 +1,8 @@
 # trezor_flutter example
 
 Lists Trezors on USB (Android, macOS) and over Bluetooth (Android, iOS,
-macOS), connects to one, and shows its model, firmware and first Ethereum and
-Solana addresses.
+macOS), connects to one, and shows its model, firmware and first Ethereum,
+Solana and Tron addresses.
 
 ```sh
 flutter run            # Android or iOS device
