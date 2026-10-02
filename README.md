@@ -2,7 +2,7 @@
 
 Connect Flutter apps to [Trezor](https://trezor.io) hardware wallets over
 native transports — **USB and Bluetooth LE on Android and macOS, Bluetooth LE
-on iOS** —
+on iOS, USB on Windows** —
 with no bridge, no Trezor Suite and no web view.
 
 The native side is a thin packet pipe. Everything else — framing, encryption,
@@ -30,7 +30,7 @@ software development.
 
 **Transports**
 
-- USB on Android and macOS, through the Trezor WebUSB interface, with all I/O
+- USB on Android, macOS and Windows, through the Trezor WebUSB interface, with all I/O
   on background threads (the UI never waits on the device).
 - USB hotplug events (attached / detached) and, on Android, runtime USB
   permission prompts.
@@ -89,6 +89,7 @@ software development.
 | iOS · Bluetooth · THP     | Tested on real devices           |
 | macOS · USB · Codec v1    | Tested on a real device (Safe 3) |
 | macOS · Bluetooth · THP   | Builds; not yet tested on device |
+| Windows · USB · Codec v1  | Tested on a real device (Safe 3) |
 
 In addition, the protocol layer has unit tests, including known-answer vectors for CRC-32,
 Elligator 2 and CPace, a full THP handshake + pairing + credential reuse against
@@ -107,16 +108,18 @@ streaming.
 \* Tron needs firmware with Tron support; check
 `features.hasCapability(TrezorCapability.tron)`.
 
-† On macOS, Model One needs firmware 1.7 or later (WebUSB); older firmware only
-has a HID interface, which Android supports and macOS does not.
+† On macOS and Windows, Model One needs firmware 1.7 or later (WebUSB); older
+firmware only has a HID interface, which Android supports and the desktop
+platforms do not.
 
 iOS apps cannot talk to a Trezor over USB, so iOS supports Bluetooth only.
+Windows supports USB only.
 
 ## Installation
 
 ```yaml
 dependencies:
-  trezor_flutter: ^1.0.0
+  trezor_flutter: ^1.2.0
 ```
 
 ### Android
@@ -156,6 +159,16 @@ dependencies:
 - Only one app can hold a Trezor's USB interface: close Trezor Suite (and stop
   `trezord`) while your app is connected.
 
+### Windows
+
+- Windows 10 or later. Trezor firmware carries Microsoft OS descriptors, so
+  Windows binds the Trezor to its built-in WinUSB driver: no driver install and
+  no permission prompt.
+- USB only: `capabilities()` reports `ble: false`, and the Bluetooth methods
+  throw `TrezorPlatformException` with code `unsupported`.
+- Only one app can hold a Trezor's USB interface: close Trezor Suite (and stop
+  `trezord`) while your app is connected.
+
 ### iOS
 
 - iOS 14 or later.
@@ -175,7 +188,7 @@ import 'package:trezor_flutter/trezor_flutter.dart';
 
 final platform = TrezorPlatform.instance;
 
-final caps = await platform.capabilities(); // (usb: true, ble: true) on Android and macOS
+final caps = await platform.capabilities(); // (usb: true, ble: true) on Android and macOS; ble: false on Windows
 
 // USB (Android, macOS): list what is plugged in, and follow plug / unplug.
 final usbDevices = await platform.usbListDevices();
@@ -202,7 +215,7 @@ if (await platform.bluetoothState() == TrezorBluetoothState.on) {
 
 ```dart
 if (device.transport == TrezorTransportType.usb && !device.hasPermission) {
-  await platform.usbRequestPermission(device.id); // Android's USB dialog; always granted on macOS
+  await platform.usbRequestPermission(device.id); // Android's USB dialog; always granted on macOS and Windows
 }
 
 final link = await NativeTrezorLink.open(device);

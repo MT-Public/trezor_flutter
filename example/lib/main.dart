@@ -24,6 +24,7 @@ class _TrezorExampleState extends State<TrezorExample> {
   final _devices = <TrezorDevice>{};
   StreamSubscription<TrezorPlatformEvent>? _events;
   bool _usbSupported = false;
+  bool _bleSupported = false;
   bool _scanning = false;
 
   TrezorClient? _client;
@@ -43,6 +44,7 @@ class _TrezorExampleState extends State<TrezorExample> {
   Future<void> _init() async {
     final caps = await _platform.capabilities();
     _usbSupported = caps.usb;
+    setState(() => _bleSupported = caps.ble);
     await _refreshUsb();
   }
 
@@ -191,10 +193,11 @@ class _TrezorExampleState extends State<TrezorExample> {
         actions: [
           if (_usbSupported)
             IconButton(icon: const Icon(Icons.usb), onPressed: _refreshUsb),
-          IconButton(
-            icon: const Icon(Icons.bluetooth_searching),
-            onPressed: _scanning ? null : _scan,
-          ),
+          if (_bleSupported)
+            IconButton(
+              icon: const Icon(Icons.bluetooth_searching),
+              onPressed: _scanning ? null : _scan,
+            ),
         ],
       ),
       body: ListView(

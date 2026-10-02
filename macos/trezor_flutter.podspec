@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'trezor_flutter'
-  s.version          = '1.1.0'
+  s.version          = '1.2.0'
   s.summary          = 'USB and Bluetooth LE transport for Trezor hardware wallets on macOS.'
   s.description      = <<-DESC
 IOKit (USB) and CoreBluetooth (Bluetooth LE) implementation of the

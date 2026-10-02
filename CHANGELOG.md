@@ -1,3 +1,9 @@
+## 1.2.0
+
+- Windows: USB (WinUSB, WebUSB interface) with USB hotplug events. No
+  driver install needed on Windows 10 and later. Bluetooth is not supported
+  on Windows.
+
 ## 1.1.0
 
 - macOS: USB (IOKit, WebUSB interface) and Bluetooth LE (CoreBluetooth),
