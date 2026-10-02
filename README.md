@@ -2,7 +2,7 @@
 
 Connect Flutter apps to [Trezor](https://trezor.io) hardware wallets over
 native transports — **USB and Bluetooth LE on Android and macOS, Bluetooth LE
-on iOS, USB on Windows** —
+on iOS, USB on Windows and on the web (WebUSB)** —
 with no bridge, no Trezor Suite and no web view.
 
 The native side is a thin packet pipe. Everything else — framing, encryption,
@@ -30,7 +30,8 @@ software development.
 
 **Transports**
 
-- USB on Android, macOS and Windows, through the Trezor WebUSB interface, with all I/O
+- USB on Android, macOS, Windows and the web (WebUSB in Chromium browsers),
+  through the Trezor WebUSB interface, with all I/O
   on background threads (the UI never waits on the device).
 - USB hotplug events (attached / detached) and, on Android, runtime USB
   permission prompts.
@@ -75,7 +76,7 @@ software development.
 
 **Packaging**
 
-- Android, iOS, macOS and Windows; Swift Package Manager and CocoaPods, Apple
+- Android, iOS, macOS, Windows and web; Swift Package Manager and CocoaPods, Apple
   privacy manifest included.
 - No required native setup beyond the Bluetooth permissions; pure-Dart
   protocol layer that can be tested without hardware (see `TrezorLink`).
@@ -90,6 +91,7 @@ software development.
 | macOS · USB · Codec v1    | Tested on a real device (Safe 3) |
 | macOS · Bluetooth · THP   | Builds; not yet tested on device |
 | Windows · USB · Codec v1  | Tested on a real device (Safe 3) |
+| Web · USB · Codec v1      | Builds; not yet tested on device |
 
 In addition, the protocol layer has unit tests, including known-answer vectors for CRC-32,
 Elligator 2 and CPace, a full THP handshake + pairing + credential reuse against
@@ -99,27 +101,26 @@ streaming.
 
 ## Supported devices
 
-| Model                   | USB (Android, macOS, Windows) | Bluetooth (Android, iOS, macOS) | Protocol | Solana | Tron |
-|-------------------------|-------------------------------|---------------------------------|----------|--------|------|
-| Model One               | ✓†                            | —                               | Codec v1 | —      | —    |
-| Model T, Safe 3, Safe 5 | ✓                             | —                               | Codec v1 | ✓      | ✓*   |
-| Safe 7                  | ✓                             | ✓                               | THP      | ✓      | ✓*   |
+| Model                   | USB (Android, macOS, Windows, web) | Bluetooth (Android, iOS, macOS) | Protocol | Solana | Tron |
+|-------------------------|------------------------------------|---------------------------------|----------|--------|------|
+| Model One               | ✓†                                 | —                               | Codec v1 | —      | —    |
+| Model T, Safe 3, Safe 5 | ✓                                  | —                               | Codec v1 | ✓      | ✓*   |
+| Safe 7                  | ✓                                  | ✓                               | THP      | ✓      | ✓*   |
 
 \* Tron needs firmware with Tron support; check
 `features.hasCapability(TrezorCapability.tron)`.
 
-† On macOS and Windows, Model One needs firmware 1.7 or later (WebUSB); older
-firmware only has a HID interface, which Android supports and the desktop
-platforms do not.
+† On macOS, Windows and the web, Model One needs firmware 1.7 or later
+(WebUSB); older firmware only has a HID interface, which only Android supports.
 
 iOS apps cannot talk to a Trezor over USB, so iOS supports Bluetooth only.
-Windows supports USB only.
+Windows and the web support USB only.
 
 ## Installation
 
 ```yaml
 dependencies:
-  trezor_flutter: ^1.2.0
+  trezor_flutter: ^1.3.0
 ```
 
 ### Android
@@ -169,6 +170,26 @@ dependencies:
 - Only one app can hold a Trezor's USB interface: close Trezor Suite (and stop
   `trezord`) while your app is connected.
 
+### Web
+
+- Chromium-based browsers (Chrome, Edge, Opera) over WebUSB, on a secure
+  page: `https://`, or `http://localhost` / `127.0.0.1` while developing. Over
+  plain http from any other address (such as `http://192.168.x.x:8080` from
+  another computer), the browser hides WebUSB and `capabilities()` reports
+  `usb: false`, exactly as in an unsupported browser.
+- **Safari and Firefox are not supported**: they do not implement WebUSB, so a
+  page cannot reach USB devices at all. `capabilities()` reports `usb: false`
+  there; check it and tell users to open the page in Chrome or Edge.
+- A page sees only Trezors the user picked in the browser's device chooser.
+  Show it with `platform.usbRequestDevice()` **from a button handler** (browsers
+  open it only right after a click or tap); the browser remembers the choice,
+  so `usbListDevices()` lists the Trezor on later visits.
+- USB only: the Bluetooth methods throw `unsupported`.
+- On Linux, the browser needs [Trezor's udev rules](https://trezor.io/learn/a/udev-rules)
+  to access the device.
+- Only one program can hold a Trezor's USB interface: close Trezor Suite (and
+  stop `trezord`), and other tabs using the Trezor, while your app is connected.
+
 ### iOS
 
 - iOS 14 or later.
@@ -188,10 +209,15 @@ import 'package:trezor_flutter/trezor_flutter.dart';
 
 final platform = TrezorPlatform.instance;
 
-final caps = await platform.capabilities(); // (usb: true, ble: true) on Android and macOS; ble: false on Windows
+final caps = await platform.capabilities(); // (usb: true, ble: true) on Android and macOS; ble: false on Windows and web
 
-// USB (Android, macOS): list what is plugged in, and follow plug / unplug.
+// USB (Android, macOS, Windows, web): list what is plugged in, and follow
+// plug / unplug.
 final usbDevices = await platform.usbListDevices();
+
+// Web only: let the user pick a Trezor in the browser's chooser. Call it from a
+// button handler; afterwards the device is in usbListDevices().
+final picked = await platform.usbRequestDevice(); // null if dismissed
 
 // Bluetooth: results arrive as events.
 platform.events.listen((event) {
@@ -215,7 +241,7 @@ if (await platform.bluetoothState() == TrezorBluetoothState.on) {
 
 ```dart
 if (device.transport == TrezorTransportType.usb && !device.hasPermission) {
-  await platform.usbRequestPermission(device.id); // Android's USB dialog; always granted on macOS and Windows
+  await platform.usbRequestPermission(device.id); // Android's USB dialog; always granted on macOS, Windows and web
 }
 
 final link = await NativeTrezorLink.open(device);
@@ -356,11 +382,12 @@ await trezor.close();  // releases the connection
 
 | API                                | Purpose                                                                                                                                          |
 |------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| `TrezorPlatform.instance`          | Native bridge (singleton).                                                                                                                       |
+| `TrezorPlatform.instance`          | Platform bridge (singleton).                                                                                                                     |
 | `capabilities()`                   | Which transports this platform offers: `(usb, ble)`.                                                                                             |
 | `bluetoothState()`                 | `TrezorBluetoothState`: `on`, `off`, `unauthorized`, `unavailable`, `unknown`.                                                                   |
-| `usbListDevices()`                 | Trezors on USB (Android, macOS), as `TrezorDevice`.                                                                                              |
-| `usbRequestPermission(deviceId)`   | Shows Android's USB access dialog; always granted on macOS.                                                                                      |
+| `usbListDevices()`                 | Trezors on USB (Android, macOS, Windows, web), as `TrezorDevice`.                                                                                |
+| `usbRequestDevice()`               | Web: the browser's device chooser; returns the picked Trezor or `null`.                                                                          |
+| `usbRequestPermission(deviceId)`   | Shows Android's USB access dialog; always granted elsewhere.                                                                                     |
 | `bleStartScan()` / `bleStopScan()` | Bluetooth scan; results arrive on `events`.                                                                                                      |
 | `events`                           | `TrezorBleScanResult`, `TrezorBleScanFailed`, `TrezorUsbAttached`, `TrezorUsbDetached`, `TrezorBluetoothStateChanged`, `TrezorLinkDisconnected`. |
 | `TrezorDevice`                     | `id`, `transport`, `name`, `vendorId`, `productId`, `rssi`, `hasPermission`, `isBootloader`.                                                     |
@@ -454,19 +481,23 @@ pairing messages. Import it with a prefix.
 ## Architecture
 
 ```
-┌──────────────────────── Dart (shared) ────────────────────────┐
-│ Chain helpers   ethereum*, solana*, tron*                     │
-│ TrezorClient    prompts, sessions, cancel                     │
-│ Protocols       Codec v1 │ THP (Noise, CPace)                 │
-│ Protobuf        typed messages                                │
-│ TrezorLink      64-byte (USB) / 244-byte (BLE)                │
-└───────────────────────────────┬───────────────────────────────┘
-                                │ method + event channel
-┌─── Android ───┬───── iOS ─────┬──── macOS ────┬─── Windows ───┐
-│ UsbManager    │ CoreBluetooth │ IOKit (USB)   │ WinUSB        │
-│ BluetoothGatt │               │ CoreBluetooth │               │
-└───────────────┴───────────────┴───────────────┴───────────────┘
+┌──────────────────────────────── Dart (shared) ────────────────────────────────┐
+│ Chain helpers   ethereum*, solana*, tron*                                     │
+│ TrezorClient    prompts, sessions, cancel                                     │
+│ Protocols       Codec v1 │ THP (Noise, CPace)                                 │
+│ Protobuf        typed messages                                                │
+│ TrezorLink      64-byte (USB) / 244-byte (BLE)                                │
+└───────────────────────────────────────┬───────────────────────────────────────┘
+                                        │ method + event channel
+┌─── Android ───┬───── iOS ─────┬──── macOS ────┬─── Windows ───┬───── Web ─────┐
+│ UsbManager    │ CoreBluetooth │ IOKit (USB)   │ WinUSB        │ WebUSB        │
+│ BluetoothGatt │               │ CoreBluetooth │               │               │
+└───────────────┴───────────────┴───────────────┴───────────────┴───────────────┘
 ```
+
+On the web the platform side is Dart too (`lib/trezor_flutter_web.dart`,
+over WebUSB), behind the same channels. WebUSB exists only in Chromium-based
+browsers, so in Safari and Firefox the Web column has no transport at all.
 
 Native code only discovers devices and moves fixed-size packets, which keeps
 it small enough to audit and makes the whole protocol stack testable with an
@@ -483,6 +514,8 @@ in-memory `TrezorLink`.
   unknown chains and tokens are shown by chain id and contract address.
 - Model One PIN entry through the host needs your own matrix UI via
   `onPinMatrixRequest`; touchscreen models take the PIN on the device.
+- Web: USB only, and only in Chromium-based browsers (Safari and Firefox have
+  no WebUSB). No Bluetooth on the web or on Windows.
 
 ## About Macromodule Technologies
 

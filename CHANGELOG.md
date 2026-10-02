@@ -1,3 +1,16 @@
+## 1.3.0
+
+- Web: USB over WebUSB (Chrome, Edge and other Chromium browsers), with
+  connect / disconnect events. New `TrezorPlatform.usbRequestDevice()` shows the
+  browser's device chooser. Safari and Firefox have no WebUSB:
+  `capabilities()` reports `usb: false` there.
+- Example app: runs in the browser (USB button opens the device chooser) and
+  explains when USB is unavailable (Safari / Firefox, or a page that is not
+  served over https or localhost).
+- Protobuf varints no longer use bitwise operators, which JavaScript limits to
+  32 bits: values of 2^32 and above (Tron timestamps and amounts) now encode and
+  decode correctly on the web. The whole test suite also passes in Chrome.
+
 ## 1.2.1
 
 - Documentation: Windows in the supported devices table, the architecture

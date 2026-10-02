@@ -26,10 +26,13 @@ class ProtoWriter {
     if (value < 0) {
       throw ArgumentError.value(value, 'value', 'negative varints unsupported');
     }
+    // Arithmetic rather than `&` / `>>`: compiled to JavaScript, bitwise
+    // operators work on 32 bits only, and messages carry larger values (Tron
+    // timestamps and amounts). `%` and `~/` are exact up to 2^53 there.
     var v = value;
     while (v >= 0x80) {
-      _out.addByte((v & 0x7F) | 0x80);
-      v >>= 7;
+      _out.addByte((v % 0x80) | 0x80);
+      v = v ~/ 0x80;
     }
     _out.addByte(v);
   }
@@ -105,14 +108,17 @@ class ProtoFields {
     int readVarint() {
       var result = 0;
       var shift = 0;
+      // 2^shift, by multiplication: see ProtoWriter._varint.
+      var scale = 1;
       while (true) {
         if (offset >= data.length) {
           throw const TrezorProtocolException('Truncated protobuf varint');
         }
         final byte = data[offset++];
-        if (shift < 64) result |= (byte & 0x7F) << shift;
+        if (shift < 64) result += (byte & 0x7F) * scale;
         if (byte & 0x80 == 0) return result;
         shift += 7;
+        scale *= 0x80;
         if (shift > 70) {
           throw const TrezorProtocolException('Protobuf varint too long');
         }
@@ -215,11 +221,13 @@ class ProtoFields {
     while (offset < data.length) {
       var value = 0;
       var shift = 0;
+      var scale = 1; // see readVarint
       while (true) {
         final byte = data[offset++];
-        if (shift < 64) value |= (byte & 0x7F) << shift;
+        if (shift < 64) value += (byte & 0x7F) * scale;
         if (byte & 0x80 == 0) break;
         shift += 7;
+        scale *= 0x80;
         if (offset >= data.length) {
           throw const TrezorProtocolException('Truncated packed varint');
         }

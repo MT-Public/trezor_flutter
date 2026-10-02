@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 
 import '../exceptions.dart';
@@ -61,6 +62,7 @@ class TrezorLinkDisconnected extends TrezorPlatformEvent {
 /// | `bluetoothState`       | —                             | state string        |
 /// | `usbListDevices`       | —                             | `List<device map>`  |
 /// | `usbRequestPermission` | `{deviceId}`                  | `bool`              |
+/// | `usbRequestDevice`     | — (web only)                  | device map or null  |
 /// | `bleStartScan`         | —                             | —                   |
 /// | `bleStopScan`          | —                             | —                   |
 /// | `open`                 | `{deviceId, transport}`       | `{packetSize}`      |
@@ -193,6 +195,25 @@ class TrezorPlatform {
   Future<bool> usbRequestPermission(String deviceId) async =>
       await _invoke<bool>('usbRequestPermission', {'deviceId': deviceId}) ??
       false;
+
+  /// Web only: shows the browser's USB device picker, filtered to Trezors, and
+  /// returns the chosen device, or null if the user closed the picker.
+  ///
+  /// A web page sees only devices the user picked here; the browser remembers
+  /// the choice, so [usbListDevices] lists the Trezor from then on. Browsers
+  /// show the picker only right after a user gesture: call this from a button
+  /// handler. Other platforms list plugged-in devices without asking and throw
+  /// [TrezorPlatformErrorCode.unsupported].
+  Future<TrezorDevice?> usbRequestDevice() async {
+    if (!kIsWeb) {
+      throw const TrezorPlatformException(
+        TrezorPlatformErrorCode.unsupported,
+        'usbRequestDevice is only needed on the web',
+      );
+    }
+    final map = await _invoke<Map<Object?, Object?>>('usbRequestDevice');
+    return map == null ? null : TrezorDevice.fromMap(map);
+  }
 
   /// Results arrive as [TrezorBleScanResult] events.
   Future<void> bleStartScan() async {

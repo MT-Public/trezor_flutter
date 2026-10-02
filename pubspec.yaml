@@ -2,7 +2,7 @@ name: trezor_flutter
 description: >-
   Trezor hardware wallets in Flutter over native USB and Bluetooth LE, with
   Codec v1 and the encrypted Trezor-Host Protocol (THP) in pure Dart.
-version: 1.2.1
+version: 1.3.0
 homepage: https://github.com/MT-Public/trezor_flutter
 repository: https://github.com/MT-Public/trezor_flutter
 issue_tracker: https://github.com/MT-Public/trezor_flutter/issues
@@ -19,6 +19,9 @@ environment:
 
 dependencies:
   flutter:
+    sdk: flutter
+  # The web plugin's channel registration.
+  flutter_web_plugins:
     sdk: flutter
   # SHA-256/512 and HMAC, synchronously.
   crypto: ^3.0.3
@@ -43,3 +46,6 @@ flutter:
         pluginClass: TrezorFlutterPluginCApi
       macos:
         pluginClass: TrezorFlutterPlugin
+      web:
+        pluginClass: TrezorFlutterWeb
+        fileName: trezor_flutter_web.dart

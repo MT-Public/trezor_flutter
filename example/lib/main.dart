@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:trezor_flutter/trezor_flutter.dart';
 
-void main() => runApp(const MaterialApp(home: TrezorExample()));
+void main() => runApp(const MaterialApp(
+  debugShowCheckedModeBanner: false,
+  home: TrezorExample()));
 
 class TrezorExample extends StatefulWidget {
   const TrezorExample({super.key});
@@ -71,6 +73,16 @@ class _TrezorExampleState extends State<TrezorExample> {
       _devices.removeWhere((d) => d.transport == TrezorTransportType.usb);
       _devices.addAll(usb);
     });
+  }
+
+  /// Web: a page sees only Trezors the user picked in the browser's chooser.
+  Future<void> _chooseUsb() async {
+    try {
+      await _platform.usbRequestDevice();
+    } on TrezorException catch (e) {
+      setState(() => _status = e.message);
+    }
+    await _refreshUsb();
   }
 
   Future<void> _scan() async {
@@ -192,7 +204,10 @@ class _TrezorExampleState extends State<TrezorExample> {
         title: const Text('trezor_flutter'),
         actions: [
           if (_usbSupported)
-            IconButton(icon: const Icon(Icons.usb), onPressed: _refreshUsb),
+            IconButton(
+              icon: const Icon(Icons.usb),
+              onPressed: kIsWeb ? _chooseUsb : _refreshUsb,
+            ),
           if (_bleSupported)
             IconButton(
               icon: const Icon(Icons.bluetooth_searching),
@@ -237,8 +252,17 @@ class _TrezorExampleState extends State<TrezorExample> {
           ],
           const Divider(),
           if (_devices.isEmpty)
-            const ListTile(
-              title: Text('No Trezor found. Plug one in, or tap scan.'),
+            ListTile(
+              title: Text(
+                kIsWeb && !_usbSupported
+                    ? 'USB is not available on this page. It needs Chrome or '
+                          'Edge, and a secure address: https:// or '
+                          'http://localhost (not a network IP).'
+                    : kIsWeb
+                    ? 'No Trezor yet. Plug one in and tap the USB button to '
+                          'choose it.'
+                    : 'No Trezor found. Plug one in, or tap scan.',
+              ),
             ),
           for (final device in _devices)
             ListTile(
