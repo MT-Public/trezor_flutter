@@ -75,8 +75,8 @@ software development.
 
 **Packaging**
 
-- Android, iOS and macOS, Swift Package Manager and CocoaPods, Apple privacy
-  manifest included.
+- Android, iOS, macOS and Windows; Swift Package Manager and CocoaPods, Apple
+  privacy manifest included.
 - No required native setup beyond the Bluetooth permissions; pure-Dart
   protocol layer that can be tested without hardware (see `TrezorLink`).
 
@@ -99,11 +99,11 @@ streaming.
 
 ## Supported devices
 
-| Model                   | USB (Android, macOS) | Bluetooth | Protocol | Solana | Tron |
-|-------------------------|----------------------|-----------|----------|--------|------|
-| Model One               | ✓†                   | —         | Codec v1 | —      | —    |
-| Model T, Safe 3, Safe 5 | ✓                    | —         | Codec v1 | ✓      | ✓*   |
-| Safe 7                  | ✓                    | ✓         | THP      | ✓      | ✓*   |
+| Model                   | USB (Android, macOS, Windows) | Bluetooth (Android, iOS, macOS) | Protocol | Solana | Tron |
+|-------------------------|-------------------------------|---------------------------------|----------|--------|------|
+| Model One               | ✓†                            | —                               | Codec v1 | —      | —    |
+| Model T, Safe 3, Safe 5 | ✓                             | —                               | Codec v1 | ✓      | ✓*   |
+| Safe 7                  | ✓                             | ✓                               | THP      | ✓      | ✓*   |
 
 \* Tron needs firmware with Tron support; check
 `features.hasCapability(TrezorCapability.tron)`.
@@ -454,18 +454,18 @@ pairing messages. Import it with a prefix.
 ## Architecture
 
 ```
-┌──────────────── Dart (shared) ────────────────┐
-│ Chain helpers   ethereum*, solana*, tron*     │
-│ TrezorClient    prompts, sessions, cancel     │
-│ Protocols       Codec v1 │ THP (Noise, CPace) │
-│ Protobuf        typed messages                │
-│ TrezorLink      64-byte (USB) / 244-byte (BLE)│
-└───────────────────────┬───────────────────────┘
-                        │ method + event channel
-┌─── Android ───┬───── iOS ─────┬──── macOS ────┐
-│ UsbManager    │ CoreBluetooth │ IOKit (USB)   │
-│ BluetoothGatt │               │ CoreBluetooth │
-└───────────────┴───────────────┴───────────────┘
+┌──────────────────────── Dart (shared) ────────────────────────┐
+│ Chain helpers   ethereum*, solana*, tron*                     │
+│ TrezorClient    prompts, sessions, cancel                     │
+│ Protocols       Codec v1 │ THP (Noise, CPace)                 │
+│ Protobuf        typed messages                                │
+│ TrezorLink      64-byte (USB) / 244-byte (BLE)                │
+└───────────────────────────────┬───────────────────────────────┘
+                                │ method + event channel
+┌─── Android ───┬───── iOS ─────┬──── macOS ────┬─── Windows ───┐
+│ UsbManager    │ CoreBluetooth │ IOKit (USB)   │ WinUSB        │
+│ BluetoothGatt │               │ CoreBluetooth │               │
+└───────────────┴───────────────┴───────────────┴───────────────┘
 ```
 
 Native code only discovers devices and moves fixed-size packets, which keeps

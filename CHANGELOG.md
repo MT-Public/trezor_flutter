@@ -1,3 +1,8 @@
+## 1.2.1
+
+- Documentation: Windows in the supported devices table, the architecture
+  diagram and the packaging notes.
+
 ## 1.2.0
 
 - Windows: USB (WinUSB, WebUSB interface) with USB hotplug events. No

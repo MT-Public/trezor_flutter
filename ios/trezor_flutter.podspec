@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'trezor_flutter'
-  s.version          = '1.2.0'
+  s.version          = '1.2.1'
   s.summary          = 'Bluetooth LE transport for Trezor hardware wallets.'
   s.description      = <<-DESC
 CoreBluetooth implementation of the trezor_flutter packet pipe. The Trezor
